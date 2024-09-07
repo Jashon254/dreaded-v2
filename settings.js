@@ -16,7 +16,10 @@ const mode = process.env.MODE || 'public';
 const gcpresence = process.env.GC_PRESENCE || 'true';
 const antionce = process.env.ANTIVIEWONCE || 'true';
 const sessionName = "session";
-const presence = process.env.WA_PRESENCE || 'typing';
+const presence = process.env.WA_PRESENCE || '';
+
+const antitag = process.env.ANTITAG || 'true';
+const antidelete = process.env.ANTIDELETE || 'true';
 const autoview = process.env.AUTOVIEW_STATUS || 'true';
 const autoread = process.env.AUTOREAD || 'true';
 const autobio = process.env.AUTOBIO || 'true';
@@ -37,5 +40,7 @@ module.exports = {
   DevDreaded,
   gcpresence,
   antionce,
-session
+session,
+antitag,
+antidelete
 };

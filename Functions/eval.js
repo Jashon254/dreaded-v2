@@ -1,4 +1,7 @@
-module.exports = async (client, m, Owner, budy) => {
+module.exports = async (client, m, Owner, budy, fetchJson, store) => {
+
+
+const { proto } = require("@whiskeysockets/baileys");
 
 if (budy && budy.startsWith('>')) {
   if (!Owner) return m.reply("You need owner privileges to execute this command!")

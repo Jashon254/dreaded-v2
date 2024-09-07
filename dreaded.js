@@ -3,7 +3,7 @@ const fs = require("fs");
 const util = require("util");
 const chalk = require("chalk");
 const speed = require("performance-now");
-const { smsg, formatp, tanggal, formatDate, getTime, sleep, clockString, fetchJson, getBuffer, jsonformat, generateProfilePicture, parseMention, getRandom } = require('./lib/botFunctions.js');
+const { smsg, formatp, tanggal, formatDate, getTime, sleep, clockString, fetchJson, getBuffer, jsonformat, generateProfilePicture, parseMention, getRandom, fetchBuffer } = require('./lib/botFunctions.js');
 const { exec, spawn, execSync } = require("child_process");
 const {  TelegraPh, UploadFileUgu } = require("./lib/toUrl");
 const path = require('path');
@@ -15,12 +15,14 @@ const eval = require('./Functions/eval');
 const antiviewonce = require('./Functions/antiviewonce');
 const gcPresence = require('./Functions/gcPresence');
 const antilink = require('./Functions/antilink');
+const antitaggc = require('./Functions/antitag');
+// const antidel = require('./Functions/antidelete');
 
 
 const {
    presence, autoread, botname,
   mode, prefix, mycode, author, packname,
-  dev, gcpresence, antionce
+  dev, gcpresence, antionce, antitag, antidelete
 } = require('./settings');
 
 
@@ -34,6 +36,11 @@ module.exports = dreaded = async (client, m, chatUpdate, store) => {
     : m.mtype === "extendedTextMessage"
     ? m.message.extendedTextMessage.text
     : "";
+    const Tag =
+      m.mtype == "extendedTextMessage" &&
+      m.message.extendedTextMessage.contextInfo != null
+        ? m.message.extendedTextMessage.contextInfo.mentionedJid
+        : [];
 
 var msgDreaded = m.message.extendedTextMessage?.contextInfo?.quotedMessage;
 
@@ -74,10 +81,10 @@ var budy = typeof m.text == "string" ? m.text : "";
 const DevDreaded = dev.split(",");
     const Owner = DevDreaded.map((v) => v.replace(/[^0-9]/g, "") + "@s.whatsapp.net").includes(m.sender)
    
-                        const groupMetadata = m.isGroup ? await client.groupMetadata(m.chat).catch((e) => {}) : "";
-    const groupName = m.isGroup ? groupMetadata.subject : "";
-    const participants = m.isGroup ? await groupMetadata.participants : ""; 
-     const groupAdmin = m.isGroup ? await getGroupAdmins(participants) : ""; 
+                                            const groupMetadata = m.isGroup ? await client.groupMetadata(m.chat).catch((e) => {}) : "";
+const groupName = m.isGroup && groupMetadata ? await groupMetadata.subject : "";
+    const participants = m.isGroup && groupMetadata ? await groupMetadata.participants : ""; 
+     const groupAdmin = m.isGroup ? await getGroupAdmins(participants) : "";  
      const isBotAdmin = m.isGroup ? groupAdmin.includes(botNumber) : false; 
      const isAdmin = m.isGroup ? groupAdmin.includes(m.sender) : false;
 
@@ -87,22 +94,52 @@ const context = {
     client, m, text, Owner, chatUpdate, store, isBotAdmin, isAdmin, IsGroup, participants,
     pushname, body, budy, totalCommands, args, mime, qmsg, msgDreaded, botNumber, itsMe,
     packname, author, generateProfilePicture, groupMetadata, dreadedspeed, mycode,
-    fetchJson, exec, getRandom, UploadFileUgu, TelegraPh, prefix, cmd, botname, mode, gcpresence, antionce
+    fetchJson, exec, getRandom, UploadFileUgu, TelegraPh, prefix, cmd, botname, mode, gcpresence, antitag,antidelete, antionce, fetchBuffer,store, chatUpdate, getGroupAdmins, Tag
 };
 if (cmd && mode === 'private' && !itsMe && !Owner) {
 return;
 }
 
+  if (m.mtype == 'protocolMessage' && antidelete === 'true') {
+    if (m.fromMe) return;
+
+    const mokaya = chatUpdate.messages[0].message.protocolMessage;
+
+    if (store.messages && store.messages[m.chat] && store.messages[m.chat].array) {
+      const chats = store.messages[m.chat].array.find(a => a.id === mokaya.key.id);
+
+      if (chats) {
+        chats.msg.contextInfo = {
+          mentionedJid: [chats.key.participant],
+          isForwarded: true,
+          forwardingScore: 1,
+          quotedMessage: { conversation: 'Deleted Message' },
+          ...chats.key
+        };
+
+        await client.relayMessage(m.chat, { [chats.type]: chats.msg }, {});
+
+
+      }
+    }
+  
+};
+
+
 if (await blocked_users(client, m, cmd)) {
             await m.reply("You are blocked from using bot commands.");
             return;
         }
+
+// await antidel(client, m, store, chatUpdate, antidelete);
 await status_saver(client, m, Owner, prefix)
-await eval2(client, m, Owner, budy)
-await eval(client, m, Owner, budy)
+await eval2(client, m, Owner, budy, fetchJson)
+await eval(client, m, Owner, budy, fetchJson, store)
 await antilink(client, m, isBotAdmin, isAdmin, Owner, body);
 await antiviewonce(client, m, antionce);
 await gcPresence(client, m, gcpresence);
+await antitaggc(client, m, isBotAdmin, itsMe, isAdmin, Owner, body, antitag);
+
 
     const command = cmd ? body.replace(prefix, "").trim().split(/ +/).shift().toLowerCase() : null;
 

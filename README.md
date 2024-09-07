@@ -6,12 +6,21 @@
 |----|
 
 
-# DISCLAIMER
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Rockstar-ExtraBold&size=30&pause=1000&color=0000FF&center=true&vCenter=true&width=500&height=60&lines=HOLLA+WELCOME+TO+THIS+REPO!)](https://git.io/typing-svg)
 
-***This bot is not created nor endorsed by WhatsApp. Your account might be banned. Be careful not to cause spam. This bot is a modification of the predecessor `dreaded-md`***
+   [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Rockstar-ExtraBold&color=F33A6A&lines=FORK+AND+MAYBE+GIVE+US+A+STAR)](https://git.io/typing-svg)
+
+---
+
+> [CAUTION]
+>
+> This bot is not created nor endorsed by WhatsApp. Your account might be banned. Be careful not to cause spam.
+
+---
+
 
 ## FEATURES
-This is a simple whatsapp bot with group management features and some media commands as well as AI.
+This bot is a modification of the predecessor ***`dreaded-md`*** but we changed the module to commonJs. It has group management features, some media commands, image manipulation commands as well as AI and many other features incorporated.
 
 Our AI features use random APIs to run, so sometimes they may be down.
 
@@ -60,9 +69,22 @@ Thanks to...
 * [`Adiwajshing`](https://github.com/WhiskeySockets/Baileys) ***Baileys Library***
 * [`WaSocket Discord`](https://discord.gg/WeJM5FP9GG) ***Maintaining the bot libs***
 
-* 
+
 
 ---
+
+***Tap the WhatsApp logo below to join our channel and group for updates***
+
+<p align="left">
+  <a aria-label="Join our channel for updates" href="https://whatsapp.com/channel/0029VaeZVGaFsn0Yr8xSAM35" target="_blank">
+    <img alt="whatsapp" src="https://img.shields.io/badge/CHANNEL-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" />
+  </a>
+
+<p align="left">
+  <a aria-label="Join our channel for updates" href="https://chat.whatsapp.com/HPik6o5GenqDBCosvXW3oe" target="_blank">
+    <img alt="whatsapp" src="https://img.shields.io/badge/WA GROUP-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" />
+  </a>
+
 
 Incase of any issues, contact me  [here](https://wa.me/+254114018035) via WhatsApp.
 
