@@ -36,7 +36,7 @@ Our AI features use random APIs to run, so sometimes they may be down.
 ## Pairing:
 
 
-- ***`Get your Session Id` by  [`PAIRING CODE HERE`](https://dreaded-pair.onrender.com). `or` [`HERE`](https://dreaded-v2.onrender.com).***
+- ***`Get your Session Id` by  [`PAIRING CODE HERE`](https://pair.dreaded.site). `or` [`HERE`](https://dreaded-v2.onrender.com).***
 
 
 
@@ -52,7 +52,44 @@ Our AI features use random APIs to run, so sometimes they may be down.
 
 -***`Fill in all the required variables and deploy the bot.`***
 
--***`If you plan to host the bot in your server, vps, locally or panel you can carefully edit the file settings.js`***
+-***`If you plan to host the bot in your server, vps, locally or panel you can carefully edit the file settings.js and add the session id in the session constant (if you know what that is), or you can still autheticate with qr`***
+
+
+
+## FOR TERMUX/UBUNTU/SSH VPS DEPLOY
+- Copy/Paste to your terminal
+
+```bash
+apt update && apt upgrade
+apt install git -y
+apt install nodejs -y
+git clone https://github.com/Fortunatusmokaya/dreaded-v2
+cd dreaded-v2
+npm install
+```
+## START BOT
+
+```bash
+
+npm start
+```
+
+ ***`The bot will only work if you updated the session id in settings.js`***
+
+## BACKGROUND RUNNING
+
+```bash
+npm install pm2 -g
+pm2 start index.js
+```
+ ***`This will allow bot to run in the background even when the vps terminal is closed, for termux you'll need a stable device with continuous internet connection`***
+
+## STOPPING BOT
+
+_CTRL + C_
+
+
+
 
 
 # Credits
