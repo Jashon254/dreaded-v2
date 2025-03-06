@@ -1,3 +1,5 @@
+//del.js
+
 module.exports = async (context) => {
     const { client, m, prefix } = context;
 

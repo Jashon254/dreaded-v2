@@ -1,3 +1,5 @@
+//screenshot.js
+
 module.exports = async (context) => {
 
 const { client, m, text, botname } = context;

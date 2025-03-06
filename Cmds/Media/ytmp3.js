@@ -1,64 +1,77 @@
 module.exports = async (context) => {
     const { client, m, text, fetchJson } = context;
-const axios = require("axios");
-const path = require("path");
-const ffmpeg = require("fluent-ffmpeg");
-try {
+    const yts = require("yt-search");
 
-if (!text) return m.reply("Where is the YouTube link ?")
+    try {
+            let urls = text.match(/(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch\?v=|v\/|embed\/|shorts\/|playlist\?list=)?)([a-zA-Z0-9_-]{11})/gi);
+        if (!urls) return m.reply('provide a valid YouTube link, eh ?');
 
-	let urls = text.match(/(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch\?v=|v\/|embed\/|shorts\/|playlist\?list=)?)([a-zA-Z0-9_-]{11})/gi);
-	if (!urls) return m.reply('Is this a YouTube link ?');
-	let urlIndex = parseInt(text) - 1;
-	if (urlIndex < 0 || urlIndex >= urls.length)
-		return m.reply('Invalid URL.');
-	
+        try {
 
-        let data = await fetchJson(`https://api.dreaded.site/api/alldl?url=${text}`);
-        let videoUrl = data.data.videoUrl;
+                    let data = await fetchJson(`https://api.dreaded.site/api/ytdl/audio?url=${text}`);
 
-let name = data.data.title;
+        if (!data || !data.result || !data.result.download || !data.result.download.url) {
+            return m.reply("Failed to fetch audio from the API.");
+        }
 
-        let outputFileName = `${name}.mp3`;
-        let outputPath = path.join(__dirname, outputFileName);
+        const {
+            metadata: { title, thumbnail, duration, author },
+            download: { url: audioUrl, quality, filename },
+        } = data.result;
 
 
-        const response = await axios({
-            url: videoUrl,
-            method: "GET",
-            responseType: "stream"
-        });
+
+        await m.reply(`_Downloading ${title}_`);
+
+        await client.sendMessage(
+            m.chat,
+            {
+                document: { url: audioUrl },
+                mimetype: "audio/mpeg",
+                fileName: filename,
+            },
+            { quoted: m }
+        );
+
+                await client.sendMessage(m.chat, {
+ audio: {url: audioUrl },
+mimetype: "audio/mpeg",
+ fileName: filename }, { quoted: m });
+
+        } catch (primaryError) {
+            console.error("Primary API failed:", primaryError.message);
 
 
-        ffmpeg(response.data)
-            .toFormat("mp3")
-            .save(outputPath)
-            .on("end", async () => {
+            try {
+                const fallbackData = await fetchJson(`https://api.dreaded.site/api/ytdl2/audio?url=${text}`);
+                if (!fallbackData || !fallbackData.result || !fallbackData.result.downloadUrl) {
+                    throw new Error("Invalid response from fallback API");
+                }
+
+                const { title: name, downloadUrl: audio } = fallbackData.result;
+
+                await m.reply(`_Downloading ${name}_`);
                 await client.sendMessage(
                     m.chat,
                     {
-                        document: { url: outputPath },
-                        mimetype: "audio/mp3",
-                        fileName: outputFileName,
+                        audio: { url: audio },
+                        mimetype: "audio/mpeg",
+                        fileName: `${name}.mp3`,
                     },
                     { quoted: m }
                 );
-                fs.unlinkSync(outputPath);
-            })
-            .on("error", (err) => {
-                m.reply("Download failed\n" + err.message);
-            });
 
+                        await client.sendMessage(m.chat, {
+ document: {url: audio },
+mimetype: "audio/mpeg",
+ fileName: `${name}.mp3` }, { quoted: m });
+
+            } catch (fallbackError) {
+                console.error("Fallback API failed:", fallbackError.message);
+                m.reply("Download failed: Unable to retrieve audio from both APIs.");
+            }
+        }
     } catch (error) {
         m.reply("Download failed\n" + error.message);
     }
 };
-
-
-
-
-
-
-
-
-
